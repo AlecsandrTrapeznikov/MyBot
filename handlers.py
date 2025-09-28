@@ -1,23 +1,20 @@
-from aiogram import F, Router
+from aiogram import F, Router, Bot
 from aiogram.types import Message, CallbackQuery
 import asyncio
 from aiogram.filters import CommandStart, Command
-#from aiogram.fsm.state import State, StatesGroup
-#from aiogram.fsm import FSMContext
 
 import app.keyboards as kb
+from app.Utils import token
 
 router = Router()
 
-@router.message(Command('help'))
-async def cmd_help(message: Message):
-    await message.answer('хэлп')
+Bot = Bot(token)
 
-#ловит сообшения /start, и запускает cmd_start.
+message_ids = list()
+
 @router.message(CommandStart())
 async def cmd_start(message: Message):
-    await message.answer('Привет!', reply_markup=kb.main)
-    
+    await message.answer('Привет!', reply_markup=kb.main) 
 
 @router.message(F.text == 'история')
 async def cmd_history(message: Message):
@@ -32,42 +29,43 @@ async def cmd_history(message: Message):
 
 @router.callback_query(F.data == 'h1 theme')
 async def cmd_h1theme(callback: CallbackQuery):
-    await callback.answer('')
-    await callback.message.answer('текст для 1ой темы истории')
+    a = await callback.message.answer('введити команду: /testh, для начала теста по истории')
+    message_ids.append(a.message_id)
 
 @router.callback_query(F.data == 'h2 theme')
 async def cmd_h1theme(callback: CallbackQuery):
-    await callback.answer('')
-    await callback.message.answer('текст для 2ой темы истории')
+    a = await callback.message.answer('текст для 2ой темы истории')
+    message_ids.append(a.message_id)
 
 @router.callback_query(F.data == 'h3 theme')
 async def cmd_h1theme(callback: CallbackQuery):
-    await callback.answer('')
-    await callback.message.answer('текст для 3ей темы истории')
+    a = await callback.message.answer('текст для 3ей темы истории')
+    message_ids.append(a.message_id)  
 
 @router.callback_query(F.data == 'h4 theme')
 async def cmd_h1theme(callback: CallbackQuery):
-    await callback.answer('')
-    await callback.message.answer('тест по темам истории')
+    a = await callback.message.answer('тест по темам истории')
+    message_ids.append(a.message_id)
 
+@router.message(Command("testh"))
+async def test(message: Message):
+    message.answer('тест начат:')
+    for id in message_ids:
+        await Bot.delete_message(chat_id = message.chat.id,message_id = id)
 
 @router.callback_query(F.data == 'об1 theme')
 async def cmd_h1theme(callback: CallbackQuery):
-    await callback.answer('')
     await callback.message.answer('текст для 1ой темы обществознания')
 
 @router.callback_query(F.data == 'об2 theme')
 async def cmd_h1theme(callback: CallbackQuery):
-    await callback.answer('')
     await callback.message.answer('текст для 2ой темы обществознания')
 
 @router.callback_query(F.data == 'об3 theme')
 async def cmd_h1theme(callback: CallbackQuery):
-    await callback.answer('')
     await callback.message.answer('текст для 3ой темы обществознания')   
 
 @router.callback_query(F.data == 'об4 theme')
 async def cmd_h1theme(callback: CallbackQuery):
-    await callback.answer('')
     await callback.message.answer('текст для 4ой темы обществознания')
 
